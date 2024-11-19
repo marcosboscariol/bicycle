@@ -35,7 +35,7 @@ if 'password' not in st.session_state:
 def main():
     modules = {
         'Login': [login_page, informacoes_page],
-        'Indicadores': [indicadores_producao_page, indicadores_venda_page]
+        'Indicadores': [indicadores_venda_page, indicadores_producao_page]
     }
 
     if st.session_state.username == 'admin':

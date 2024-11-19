@@ -3,6 +3,60 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 
+# CSS personalizado para alterar a cor do título, da barra lateral e dos botões
+# st.markdown(
+#     """
+#     <style>
+#     /* Alterar a cor do título */
+#     h1 {
+#         color: #FF8C00; /* Laranja mais escuro */
+#         font-weight: bold;
+#         font-family: 'Consolas', monospace;
+#     }
+
+#     /* Alterar a cor de fundo da barra lateral */
+#     .css-1d391kg {
+#         background-color: #FF8C00;  /* Laranja escuro */
+#     }
+
+#     /* Alterar a cor de fundo da sidebar do Streamlit */
+#     .css-1v3fvcr {
+#         background-color: #FF8C00;  /* Laranja escuro */
+#     }
+
+#     /* Alterar a cor do texto dos filtros */
+#     .css-1ab2c4f {
+#         color: white;  /* Cor do texto */
+#     }
+
+#     /* Alterar a cor de fundo dos botões de filtro */
+#     .css-18e3p6a {
+#         background-color: #FF8C00;  /* Laranja escuro */
+#         color: white;  /* Cor do texto do botão */
+#     }
+
+#     /* Alterar a cor do botão de filtro específico (com a classe st-ax) */
+#     .st-ax {
+#         background-color: #FF8C00 !important;  /* Laranja escuro */
+#         color: white !important;  /* Cor do texto do botão */
+#         border-radius: 5px;
+#     }
+
+#     /* Alterar a cor de hover (quando o usuário passa o mouse sobre o botão) */
+#     .st-ax:hover {
+#         background-color: #FF7F00 !important;  /* Laranja mais claro */
+#     }
+
+#     /* Alterar a cor do ícone de delete no botão */
+#     .st-ax svg {
+#         fill: white !important;  /* Cor branca para o ícone */
+#     }
+
+#     </style>
+#     """,
+#     unsafe_allow_html=True
+# )
+
 # Dados simulados para 2022, 2023 e 2024
 np.random.seed(42)
 estados = ["SP", "RJ", "MG", "BA", "PR", "RS", "SC", "PE", "CE", "MA"]
@@ -105,21 +159,22 @@ estado_color_map = {estado: color_scale[i] for i, estado in enumerate(estados)}
 # Gráfico de barras horizontais (Vendas por estado)
 fig_barras = px.bar(df_vendas_filtrado.groupby('Estado')['Vendas Bicicleta A'].sum().reset_index(),
                     x="Vendas Bicicleta A", y="Estado", orientation="h",
-                    title=f"Vendas Totais por Estado para Bicicleta A ({', '.join(map(str, ano_filtro))})",
-                    labels={"Estado": "Estado",
-                            "Vendas Bicicleta A": "Vendas"},
-                    color="Estado",  # Diferencia as cores por estado
-                    color_discrete_map=estado_color_map)  # Usar o mapa de cores gerado
+                    title=f"Vendas Totais por Estado para Bicicleta A ({
+    ', '.join(map(str, ano_filtro))})",
+    labels={"Estado": "Estado",
+            "Vendas Bicicleta A": "Vendas"},
+    color="Estado",  # Diferencia as cores por estado
+    color_discrete_map=estado_color_map)  # Usar o mapa de cores gerado
 col1.plotly_chart(fig_barras)
 
 # Gráfico de linha (Vendas ao longo do tempo)
 df_vendas_filtrado['MesAno'] = df_vendas_filtrado['Mes'].astype(
     str) + "/" + df_vendas_filtrado['Ano'].astype(str)
-fig_linha = px.line(df_vendas_filtrado, x='MesAno', y='Vendas Bicicleta A',
-                    color='Estado', title=f"Vendas de Bicicleta A ao Longo do Tempo ({', '.join(map(str, ano_filtro))})",
-                    labels={"MesAno": "Mês/Ano",
-                            "Vendas Bicicleta A": "Vendas"},
-                    color_discrete_map=estado_color_map)  # Usar o mesmo mapa de cores
+fig_linha = px.line(df_vendas_filtrado.groupby('MesAno', as_index=False).agg({'Vendas Bicicleta A': 'sum'}),
+                    x='MesAno', y='Vendas Bicicleta A',
+                    title=f"Vendas de Bicicleta A ao Longo do Tempo ({
+    ', '.join(map(str, ano_filtro))})",
+    labels={"MesAno": "Mês/Ano", "Vendas Bicicleta A": "Vendas"})
 col2.plotly_chart(fig_linha)
 
 # Mapa de vendas por estado
@@ -133,8 +188,10 @@ fig_mapa = px.scatter_geo(df_vendas_filtrado.groupby('Estado').agg({
     size="Vendas Bicicleta A",  # Tamanho do ponto proporcional às vendas
     color="Estado",  # Agora, usamos o nome do estado para colorir os pontos
     hover_name="Estado",  # Exibir o estado ao passar o mouse
-    title=f"Mapa de Vendas por Estado (Bicicleta A) - {', '.join(map(str, ano_filtro))}",
+    title=f"Mapa de Vendas por Estado (Bicicleta A) - ({
+    ', '.join(map(str, ano_filtro))})",
     color_discrete_map=estado_color_map,  # Usar o mesmo mapa de cores
     template="plotly",  # Tema do gráfico
-    projection="mercator")  # Tipo de projeção
+    projection="mercator",  # Tipo de projeção do mapa
+)
 st.plotly_chart(fig_mapa)
