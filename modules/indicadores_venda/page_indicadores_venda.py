@@ -159,12 +159,11 @@ estado_color_map = {estado: color_scale[i] for i, estado in enumerate(estados)}
 # Gráfico de barras horizontais (Vendas por estado)
 fig_barras = px.bar(df_vendas_filtrado.groupby('Estado')['Vendas Bicicleta A'].sum().reset_index(),
                     x="Vendas Bicicleta A", y="Estado", orientation="h",
-                    title=f"Vendas Totais por Estado para Bicicleta A ({
-    ', '.join(map(str, ano_filtro))})",
-    labels={"Estado": "Estado",
-            "Vendas Bicicleta A": "Vendas"},
-    color="Estado",  # Diferencia as cores por estado
-    color_discrete_map=estado_color_map)  # Usar o mapa de cores gerado
+                    title=f"Vendas Totais por Estado para Bicicleta A ({', '.join(map(str, ano_filtro))})",
+                    labels={"Estado": "Estado",
+                            "Vendas Bicicleta A": "Vendas"},
+                    color="Estado",  # Diferencia as cores por estado
+                    color_discrete_map=estado_color_map)  # Usar o mapa de cores gerado
 col1.plotly_chart(fig_barras)
 
 # Gráfico de linha (Vendas ao longo do tempo)
@@ -172,9 +171,8 @@ df_vendas_filtrado['MesAno'] = df_vendas_filtrado['Mes'].astype(
     str) + "/" + df_vendas_filtrado['Ano'].astype(str)
 fig_linha = px.line(df_vendas_filtrado.groupby('MesAno', as_index=False).agg({'Vendas Bicicleta A': 'sum'}),
                     x='MesAno', y='Vendas Bicicleta A',
-                    title=f"Vendas de Bicicleta A ao Longo do Tempo ({
-    ', '.join(map(str, ano_filtro))})",
-    labels={"MesAno": "Mês/Ano", "Vendas Bicicleta A": "Vendas"})
+                    title=f"Vendas de Bicicleta A ao Longo do Tempo({', '.join(map(str, ano_filtro))})",
+                    labels={"MesAno": "Mês/Ano", "Vendas Bicicleta A": "Vendas"})
 col2.plotly_chart(fig_linha)
 
 # Mapa de vendas por estado
@@ -188,8 +186,7 @@ fig_mapa = px.scatter_geo(df_vendas_filtrado.groupby('Estado').agg({
     size="Vendas Bicicleta A",  # Tamanho do ponto proporcional às vendas
     color="Estado",  # Agora, usamos o nome do estado para colorir os pontos
     hover_name="Estado",  # Exibir o estado ao passar o mouse
-    title=f"Mapa de Vendas por Estado (Bicicleta A) - ({
-    ', '.join(map(str, ano_filtro))})",
+    title=f"Mapa de Vendas por Estado(Bicicleta A) - ({', '.join(map(str, ano_filtro))})",
     color_discrete_map=estado_color_map,  # Usar o mesmo mapa de cores
     template="plotly",  # Tema do gráfico
     projection="mercator",  # Tipo de projeção do mapa

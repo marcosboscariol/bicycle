@@ -119,7 +119,7 @@ if st.button("Obter resposta"):
             response = cohere_client.generate(
                 model='command-xlarge-nightly',  # Use o modelo apropriado
                 prompt=prompt,
-                max_tokens=150,
+                max_tokens=600,
                 temperature=0.7
             )
             resposta = response.generations[0].text.strip()
@@ -132,56 +132,54 @@ if st.button("Obter resposta"):
             st.write("Resposta da IA:")
             st.write(resposta)
 
-            # Se a resposta indicar uma previsão para 2025, gerar gráfico
-            if "previsão" in resposta.lower() or "2025" in resposta:
-                st.write("Gerando gráfico de previsão para 2025...")
+        #     # Se a resposta indicar uma previsão para 2025, gerar gráfico
+        #     if "previsão" in resposta.lower() or "2025" in resposta:
+        #         st.write("Gerando gráfico de previsão para 2025...")
 
-                # Criação de dados de previsão (exemplo simples de regressão linear)
-                # Usaremos a produção dos anos anteriores para prever 2025
-                df_previsao = df_filtrado[df_filtrado["Ano"] < 2025]
+        #         # Criação de dados de previsão (exemplo simples de regressão linear)
+        #         df_a = df_long[df_long["Tipo de Bicicleta"] == "Bicicleta A"]
+        #         df_b = df_long[df_long["Tipo de Bicicleta"] == "Bicicleta B"]
 
-                # Preparando os dados para regressão linear
-                # Ano como variável explicativa
-                X = np.array(df_previsao["Ano"]).reshape(-1, 1)
-                y_a = df_previsao[df_previsao["Tipo de Bicicleta"]
-                                  == "Bicicleta A"]["Produção"].values
-                y_b = df_previsao[df_previsao["Tipo de Bicicleta"]
-                                  == "Bicicleta B"]["Produção"].values
+        #         # Garantindo que temos dados suficientes
+        #         if not df_a.empty and not df_b.empty:
+        #             X_a = np.array(df_a["Ano"]).reshape(-1, 1)
+        #             y_a = df_a["Produção"].values
+        #             X_b = np.array(df_b["Ano"]).reshape(-1, 1)
+        #             y_b = df_b["Produção"].values
 
-                # Modelo de regressão linear
-                modelo_a = LinearRegression()
-                modelo_b = LinearRegression()
+        #             # Modelos de regressão linear
+        #             modelo_a = LinearRegression()
+        #             modelo_b = LinearRegression()
 
-                modelo_a.fit(X, y_a)
-                modelo_b.fit(X, y_b)
+        #             modelo_a.fit(X_a, y_a)
+        #             modelo_b.fit(X_b, y_b)
 
-                # Prevendo a produção para 2025
-                previsao_a = modelo_a.predict([[2025]])[0]
-                previsao_b = modelo_b.predict([[2025]])[0]
+        #             # Prevendo a produção para 2025
+        #             previsao_a = modelo_a.predict([[2025]])[0]
+        #             previsao_b = modelo_b.predict([[2025]])[0]
 
-                # Adicionando a previsão ao gráfico
-                df_previsao_2025 = pd.DataFrame({
-                    "Ano": [2025, 2025],
-                    "Mês/Ano": ["Jan/2025", "Jan/2025"],
-                    "Produção": [previsao_a, previsao_b],
-                    "Tipo de Bicicleta": ["Bicicleta A", "Bicicleta B"]
-                })
+        #             # Criar DataFrame exclusivo para os dados previstos
+        #             df_previsao = pd.DataFrame({
+        #                 "Mês/Ano": ["Jan/2025", "Jan/2025"],
+        #                 "Produção": [previsao_a, previsao_b],
+        #                 "Tipo de Bicicleta": ["Bicicleta A", "Bicicleta B"]
+        #             })
 
-                df_long = pd.concat([df_long, df_previsao_2025])
+        #             # Gráfico exclusivo para a previsão
+        #             fig_previsao = px.line(
+        #                 df_previsao,
+        #                 x="Mês/Ano",
+        #                 y="Produção",
+        #                 color="Tipo de Bicicleta",
+        #                 markers=True,
+        #                 title=f"Previsão de Produção para 2025"
+        #             )
 
-                # Novo gráfico com a previsão
-                fig_previsao = px.line(
-                    df_long,
-                    x="Mês/Ano",
-                    y="Produção",
-                    color="Tipo de Bicicleta",
-                    markers=True,
-                    title=f"Previsão de Produção para 2025"
-                )
-
-                # Exibir o gráfico da previsão
-                st.plotly_chart(fig_previsao, use_container_width=True)
-
+        #             # Exibir o gráfico da previsão
+        #             st.plotly_chart(fig_previsao, use_container_width=True)
+        #         else:
+        #             st.warning(
+        #                 "Não há dados suficientes para prever a produção.")
         except Exception as e:
             st.error(f"Erro ao gerar a resposta: {e}")
     else:
